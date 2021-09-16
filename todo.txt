@@ -1,0 +1,19 @@
+todo:
+
+easy:
+1) enable enemies to walk through doors(done)
+
+2) sort out the display damage taken by an enemy to corrospond 
+with the hp it takes off e.g. player takes 4 dmg loses 4 hp (done)
+
+medium:
+1) add a restart condition (done)
+
+2) add a better dialogue box (done)
+
+3) tidy up the better dialogue box
+
+hard:
+1) add fog of war
+
+2) change the game to sprites

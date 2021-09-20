@@ -26,6 +26,6 @@ void GameSystem::playGame()
 		level.updateEnemies();
 		level.updateFOW();
 		level.updatePlayerMap();
-		level.updateEnemiesMap();
+		//level.updateEnemiesMap();
 	}
 }

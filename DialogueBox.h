@@ -13,7 +13,7 @@ public:
 	void addDialogue(std::string text);
 	int getDialogueSize();
 	int getDialogueElementOneSize() { return dialogue[0].size(); }
-	void resetDialogue(void);
+	void resetDialogue();
 	bool popBack = true;
 	bool repeatedText = false;
 	bool switchText = false;

@@ -155,10 +155,7 @@ void Level::render()
 	std::cout << "|-------DT-Game Dialogue!--------|" << std::endl;
 	std::cout << "|-------DONT-SHIT-THE-BED--------|" << std::endl; //34 lines long 
 	std::cout << "|--------------------------------|" << std::endl;
-	for (int i = 0; i < dialogueBox.getDialogueSize(); i++)
-	{
-		std::cout << dialogueBox.getDialogue(i) << std::endl;
-	}
+	std::cout << chatBox.getDialogue();
 	std::cout << "|--------------------------------|" << std::endl;
 	//std::cout << "|" << map.getTileVisibility(player.getXPos(), player.getYPos()) << "                               |" << std::endl;
 	std::cout << "|" << player.getTileFromMapAtCoords(player.getXPos(), player.getYPos()+2) << "                               |" << std::endl;
@@ -169,6 +166,7 @@ void Level::movePlayer(char input)
 {
 	int plrXPos = player.getXPos();
 	int plrYPos = player.getYPos();
+
 	switch (input)
 	{
 	case 'w': //UP
@@ -217,21 +215,21 @@ void Level::processPlayerMove(int targetXPos, int targetYPos, std::string direct
 	}
 	else if (moveToTile == map.tiles.wall)
 	{
-		dialogueBox.addDialogue("You run into a wall like an idiot Jasmine, wtf?"); // Jas jas jas jasjas jas...
+		chatBox.addDialogue("You run into a wall. James, wtf! That was pretty dumb.  Ayy lamo, u ok? "); 
 	}
 	else if (moveToTile == map.tiles.floor)
 	{
 		if (direction == "North") {
-			dialogueBox.addDialogue("You move, North.");
+			chatBox.addDialogue("You move, North.");
 		}
 		else if (direction == "East") {
-			dialogueBox.addDialogue("You move, East.");
+			chatBox.addDialogue("You move, East.");
 		}
 		else if (direction == "South") {
-			dialogueBox.addDialogue("You move, South");
+			chatBox.addDialogue("You move, South");
 		}
 		else if (direction == "West") {
-			dialogueBox.addDialogue("You move, West.");
+			chatBox.addDialogue("You move, West.");
 		}
 
 		player.setPosition(targetXPos, targetYPos);
@@ -251,7 +249,7 @@ void Level::processPlayerMove(int targetXPos, int targetYPos, std::string direct
 	else if (moveToTile == map.tiles.openDoor)
 	{
 		player.setPrevTile(map.tiles.openDoor);
-		dialogueBox.addDialogue("You walk through a door.");
+		chatBox.addDialogue("You walk through a door.");
 		player.setPosition(targetXPos, targetYPos);
 		setTile(plrXPos, plrYPos, map.tiles.floor);
 		setTile(targetXPos, targetYPos, map.tiles.player);
@@ -260,33 +258,39 @@ void Level::processPlayerMove(int targetXPos, int targetYPos, std::string direct
 	{
 		if (moveToTile == map.tiles.lockDoorOne && player.getKeys() == 0 || moveToTile == map.tiles.lockDoorTwo && player.getKeys() == 0)
 		{
-			dialogueBox.addDialogue("It's a locked door.");
+			chatBox.addDialogue("It's a locked door.");
 		}
 		else if (moveToTile == map.tiles.lockDoorOne && player.getKeys() >= 1 || moveToTile == map.tiles.lockDoorTwo && player.getKeys() >= 1)
 		{
-			char unlockDoor;
-			dialogueBox.addDialogue("Unlock the door? (y/n)");
-			render();
-			std::cin >> unlockDoor;
+			std::string unlockDoor = "";
 
-			switch (unlockDoor)
-			{
-			case 'y':
-				player.removeKey();
-				dialogueBox.addDialogue("You unlock the door! " + std::to_string(player.getKeys()) + " key(s) left.");
-				setTile(targetXPos, targetYPos, map.tiles.openDoor);
-				break;
-			case 'n':
-				dialogueBox.addDialogue("You save your key for later.");
-				break;
-			default:
-				break;
-			}
+			do {
+				chatBox.addDialogue("Unlock the door? (y/n)");
+				render();
+				std::cout << "Enter key (press ENTER to EXIT):";
+				std::getline(std::cin, unlockDoor);
+				
+				if (unlockDoor[0] == 'y')
+				{
+					player.removeKey();
+					chatBox.addDialogue("You unlock the door! " + std::to_string(player.getKeys()) + " key(s) left.");
+					setTile(targetXPos, targetYPos, map.tiles.openDoor);
+					return;
+				}
+				else if (unlockDoor[0] == 'n')
+				{
+					chatBox.addDialogue("You save your key for later.");
+					return;
+				}
+			} while (unlockDoor.length() != 0);
+
+			chatBox.addDialogue("You save your key for later.");
+			return;
 		}
 	}
 	else if (moveToTile == map.tiles.key)
 	{
-		dialogueBox.addDialogue("You picked up a rusty key.");
+		chatBox.addDialogue("You picked up a rusty key.");
 		player.addKey();
 		setTile(targetXPos, targetYPos, map.tiles.floor);
 	}
@@ -317,15 +321,15 @@ void Level::battleEnemy(int targetX, int targetY)
 			//do battle
 			attackRoll = player.battle();
 			attackResult = enemies[i].takeDamage(attackRoll);
-			dialogueBox.addDialogue("You hit " + enemies[i].getName() + " for " + std::to_string(attackResult) + ".");
+			chatBox.addDialogue("You hit " + enemies[i].getName() + " for " + std::to_string(attackResult) + ".");
 
 			if (enemies[i].getHealth() <= 0)
 			{
-				dialogueBox.addDialogue(enemies[i].getName() + " died. You recieved " + std::to_string(enemies[i].getExperience()) + " experience.");
+				chatBox.addDialogue(enemies[i].getName() + " died. You recieved " + std::to_string(enemies[i].getExperience()) + " experience.");
 
 				if (player.addExperience(enemies[i].getExperience()))
 				{
-					dialogueBox.addDialogue("You leveled up!");
+					chatBox.addDialogue("You leveled up!");
 				}
 
 				enemies[i] = enemies.back(); //gets the last element in the vector
@@ -352,6 +356,8 @@ void Level::updateEnemies()
 		aiMove = enemies[enemyIndex].moveTo(plrXPos, plrYpos);
 		int eneXPos = enemies[enemyIndex].getXPos();
 		int eneYPos = enemies[enemyIndex].getYPos();
+		
+		enemies[enemyIndex].setMap(this->map); //updates the enemy maps moved from own function due to time taken to complete 
 
 		switch (aiMove[0])
 		{
@@ -484,7 +490,7 @@ void Level::battlePlayer(int targetX, int targetY)
 			int plrHP = player.getCurrentHealth();
 			if (player.getCurrentHealth() <= 0)
 			{
-				dialogueBox.addDialogue(player.getName() + " was killed by " + enemies[i].getName() + ".");
+				chatBox.addDialogue(player.getName() + " was killed by " + enemies[i].getName() + ".");
 				setTile(player.getXPos(), player.getYPos(), map.tiles.floor);
 				render();
 				system("PAUSE");
@@ -507,7 +513,7 @@ void Level::gameOver()
 	if (playAgain == 'y')
 	{
 		enemies.clear();
-		dialogueBox.resetDialogue();
+		chatBox.resetDialogue();
 		load(levelName);
 	}
 	else if (playAgain == 'n')

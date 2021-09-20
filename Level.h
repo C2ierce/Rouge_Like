@@ -6,6 +6,7 @@
 #include "Enemy.h"
 #include "DialogueBox.h"
 #include "Space.h"
+#include "ChatBox.h"
 
 class Level
 {
@@ -35,6 +36,7 @@ private:
 	std::string strMap = "";
 	std::string strMapFlip = "";
 	DialogueBox dialogueBox;
+	ChatBox chatBox;
 	void processPlayerMove(int newRowPos, int newColumnPos, std::string direction);
 	void processEnemyMove(int enemyIndex, int targetXPos, int targetYPos);
 	void battleEnemy(int targetX, int targetY);

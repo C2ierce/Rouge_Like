@@ -116,6 +116,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionHandler.cpp" />
+    <ClCompile Include="ChatBox.cpp" />
     <ClCompile Include="DialogueBox.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -127,6 +129,8 @@
     <ClCompile Include="Space.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionHandler.h" />
+    <ClInclude Include="ChatBox.h" />
     <ClInclude Include="DialogueBox.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />

@@ -55,17 +55,6 @@ void Level::load(std::string levelName)
 		sizeCount++;
 	}
 
-	/*
-	for (int i = 0; i < space2D.getSizeX(); i++)
-	{
-		for (int x = 0; x < space2D.getSizeY(i); x++)
-		{
-			space2D.resize(lineA[sizeCount].size());
-
-			sizeCount++;
-		}
-	}
-	*/
 	for (int i = 0; i < row; i++)
 	{
 		for (int x = 0; x < lineA[i].size(); x++)
